@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ModifyParamFile", "ModifyParamFile\ModifyParamFile.vcxproj", "{5A9EF295-8CCF-48E2-AB16-A3DF0CB66F06}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HandleVGStudioDVC", "HandleVGStudioDVC\HandleVGStudioDVC.vcxproj", "{BEF4275B-3BBC-46FE-BB27-32A22FF88A94}"
+	ProjectSection(ProjectDependencies) = postProject
+		{5A9EF295-8CCF-48E2-AB16-A3DF0CB66F06} = {5A9EF295-8CCF-48E2-AB16-A3DF0CB66F06}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

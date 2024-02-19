@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <map>
 #include <chrono>
 #include <ctime>
 #include <time.h>
@@ -21,19 +22,6 @@ std::string get_time_string()
 	return std::string(buf);
 }
 
-int run_and_log(std::ofstream& fout, std::string cmd) {
-    auto time = std::chrono::system_clock::now();
-    std::time_t timestamp = std::chrono::system_clock::to_time_t(time);
-    struct tm localTime;
-    localtime_s(&localTime, &timestamp);
-    char buf[70];
-    strftime(buf, sizeof(buf), "%F %T", &localTime);
-    fout << "[" << buf << "]: " << cmd.c_str() << std::endl;
-    fout.flush();
-    int retcode = system(cmd.c_str());
-    return retcode;
-}
-
 int main(int argc, char* argv[])
 {
     // Dump arguments to file
@@ -41,56 +29,41 @@ int main(int argc, char* argv[])
 
     // Create command to run
     std::string cmd = "elastix.exe ";
-    std::string params_path;
+    std::map<std::string, std::string> arguments;
 
     for (int i = 0; i < argc; i++) {
-        //fout << argv[i] << std::endl;
         if (i == 0) {
             continue;
         }
-        std::string loc = std::string(argv[i]);
-        if (loc.find(' ') != std::string::npos) {
-            cmd.append("\"");
-            cmd.append(loc);
-            cmd.append("\"");
-        }
-        else {
-            cmd.append(loc);
-        }
-        cmd.append(" ");
-        // See if it's parameter file. If so, modify it later
-        if (loc.find('-p') != std::string::npos) {
-            params_path = std::string(argv[i + 1]);
+        if (argv[i][0] == '-') { // parameter
+            arguments[argv[i]] = argv[i + 1];
+            i++; // skip the next argument
         }
     }
 
-    std::string sed_cmd = "sed.exe -i 's/AdvancedNormalizedCorrelation/AdvancedMeanSquares/' ";
-    sed_cmd.append(params_path);
+    // Modify the parameter file
+    std::string params_path = arguments["-p"];
+    std::string fmod = "DVC_mod_params.txt";
+    std::string fout_params = "DVC_run_params.txt";
+    modify_param_files(params_path, fmod, fout_params);
+    arguments["-p"] = fout_params;
 
-    auto time = std::chrono::system_clock::now();
-    std::time_t timestamp = std::chrono::system_clock::to_time_t(time);
-    struct tm localTime;
-    localtime_s(&localTime, &timestamp);
-    char buf[70];
-    strftime(buf, sizeof(buf), "%F %T", &localTime);
-    fout << "[" << buf << "]: " << sed_cmd.c_str() << std::endl;
+    fout << "[" << get_time_string() << "]: " << "Modified parameter file '" << fmod << "' into '" << params_path << "' and saving to '" << fout_params << "'" << std::endl;
     fout.flush();
-    int retcode = system(sed_cmd.c_str());
 
-
-    //int sed_return = run_and_log(fout, sed_cmd);
-
-    //int retcode = run_and_log(fout, cmd);
-
-    time = std::chrono::system_clock::now();
-    timestamp = std::chrono::system_clock::to_time_t(time);
-    localtime_s(&localTime, &timestamp);
-    strftime(buf, sizeof(buf), "%F %T", &localTime);
-    fout << "[" << buf << "]: " << cmd.c_str() << std::endl;
+    // Compose and run the command
+    for (auto it = arguments.begin(); it != arguments.end(); it++) {
+        std::string value = it->second;
+        if (value.find(" ") != std::string::npos) {
+			value = "\"" + value + "\"";
+		}
+		cmd += it->first + " " + value + " ";
+	}
+    fout << "[" << get_time_string() << "]: " << cmd.c_str() << std::endl;
     fout.flush();
-    retcode = system(cmd.c_str());
-
     fout.close();
+
+    int retcode = system(cmd.c_str());
 
     return retcode;
 }
