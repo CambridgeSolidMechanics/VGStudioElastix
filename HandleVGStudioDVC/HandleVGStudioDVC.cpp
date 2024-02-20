@@ -76,9 +76,11 @@ int main(int argc, char* argv[])
 #endif // _DEBUG
 
     fout.flush();
-    fout.close();
 
     int retcode = system(cmd.c_str());
+    
+    fout << "[" << get_time_string() << "]: " << "System call returned with status " << retcode << std::endl;
+    fout.close();
 
     return retcode;
 }
