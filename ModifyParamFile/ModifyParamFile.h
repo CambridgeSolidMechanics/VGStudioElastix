@@ -4,21 +4,31 @@
 #include <fstream>
 #include <string>
 #include <map>
+#include <filesystem>
 
 using namespace std;
 
-void modify_param_files(const string& fin, const string& fmod, const string& fout)
+int modify_param_files(const string& fin, const string& fmod, const string& fout)
 {
 	// Open the input and mod files for reading and the output file for writing
-	cout << "Merging parameters from '" << fmod << "' into '" << fin << "' and output to '" << fout << "'" << endl;
-	ifstream finfile(fin);
-	ifstream fmodfile(fmod);
-	ofstream foutfile(fout, ios::out);
+	filesystem::path cdir = filesystem::current_path();
+	clog << "Current folder " << cdir.string() << endl;
+	clog << "Merging parameters from '" << fmod << "' into '" << fin << "' and output to '" << fout << "'" << endl;
+	ifstream finfile(cdir / fin, ios::in);
+	ifstream fmodfile(cdir / fmod, ios::in);
+	ofstream foutfile(cdir / fout, ios::out);
 
 	string line, lstrip;
 	map<string, string> params_enforce;
 
 	// Read through fmod and put lines into a map with the parameter name as the key
+	if (!fmodfile.is_open()) {
+		clog << "File '" << (cdir / fmod).string() << "' exists? " << filesystem::exists(cdir / fmod) << endl;
+		clog << "File '" << fmod << "' not open" << endl;
+		clog << "Create file '" << fmod << "'" << endl;
+		ofstream f_loc_out(cdir / fmod, ios::out);
+		f_loc_out.close();
+	}
 	while (getline(fmodfile, line))
 	{
 		if (line[0] == '(' && line[line.size() - 1] == ')')
@@ -29,9 +39,14 @@ void modify_param_files(const string& fin, const string& fmod, const string& fou
 			params_enforce[key] = line;
 		}
 	}
+	clog << "Read " << params_enforce.size() << " lines from file '" << fmod << "'" << endl;
 
 	// Read through fin. If the line is in the map, replace it with the value from the map
 	// Otherwise, leave the same. Either way write the line to fout
+	if (!finfile.is_open()) {
+		clog << "File '" << fin << "' not open" << endl;
+		return -1;
+	}
 	while (getline(finfile, line))
 	{
 		// if string starts and ends with a bracket
@@ -64,4 +79,6 @@ void modify_param_files(const string& fin, const string& fmod, const string& fou
 	finfile.close();
 	fmodfile.close();
 	foutfile.close();
+
+	return 0;
 }

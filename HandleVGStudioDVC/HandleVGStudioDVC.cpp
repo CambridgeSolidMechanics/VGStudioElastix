@@ -27,6 +27,11 @@ int main(int argc, char* argv[])
     // Dump arguments to file
     std::ofstream fout("DVC_log.txt", std::ios::app);
 
+#ifdef _DEBUG
+    auto old_rbuf = std::clog.rdbuf();
+    std::clog.set_rdbuf(fout.rdbuf());
+#endif // _DEBUG 
+
     // Create command to run
     std::string cmd = "elastix.exe ";
     std::map<std::string, std::string> arguments;
@@ -45,9 +50,14 @@ int main(int argc, char* argv[])
     std::string params_path = arguments["-p"];
     std::string fmod = "DVC_mod_params.txt";
     std::string fout_params = "DVC_run_params.txt";
-    modify_param_files(params_path, fmod, fout_params);
+    int retval = modify_param_files(params_path, fmod, fout_params);
+    if (retval < 0) {
+        fout << "[" << get_time_string() << "]: " << "Error modifying files" << std::endl;
+    }
     arguments["-p"] = fout_params;
 
+    fout << endl;
+    fout << "[" << get_time_string() << "]: " << "###### Start DVC ######" << std::endl;
     fout << "[" << get_time_string() << "]: " << "Modified parameter file '" << fmod << "' into '" << params_path << "' and saving to '" << fout_params << "'" << std::endl;
     fout.flush();
 
@@ -60,6 +70,11 @@ int main(int argc, char* argv[])
 		cmd += it->first + " " + value + " ";
 	}
     fout << "[" << get_time_string() << "]: " << cmd.c_str() << std::endl;
+
+#ifdef _DEBUG
+    std::cout.set_rdbuf(old_rbuf);
+#endif // _DEBUG
+
     fout.flush();
     fout.close();
 
