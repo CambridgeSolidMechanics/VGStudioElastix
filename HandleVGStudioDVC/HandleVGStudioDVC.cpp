@@ -14,7 +14,7 @@
 
 #define GNUPLOT
 
-std::string get_time_string()
+static std::string get_time_string()
 {
 	auto time = std::chrono::system_clock::now();
 	std::time_t timestamp = std::chrono::system_clock::to_time_t(time);
