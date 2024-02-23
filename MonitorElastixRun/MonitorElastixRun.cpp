@@ -84,18 +84,7 @@ int main()
 				}
 			}
 
-
-
 		}
-
-		//// Print out data for each token in header
-		//for (int i = 0; i < header.size(); i++) {
-		//	std::cout << header[i] << ". Loaded " << data[i].size() << " elements" << std::endl;
-		//	//for (int j = 0; j < data[i].size(); j++) {
-		//	//	std::cout << data[i][j] << ",";
-		//	//}
-		//	//std::cout << std::endl;
-		//}
 
 	}
 	else {

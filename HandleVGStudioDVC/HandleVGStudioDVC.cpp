@@ -8,8 +8,11 @@
 #include <chrono>
 #include <ctime>
 #include <time.h>
+#include <Windows.h>
 
 #include "ModifyParamFile.h"
+
+#define GNUPLOT
 
 std::string get_time_string()
 {
@@ -77,10 +80,28 @@ int main(int argc, char* argv[])
 
     fout.flush();
 
-    int retcode = system(cmd.c_str());
+#ifdef GNUPLOT
+    // Start process for plotting
+    STARTUPINFOA si;
+    PROCESS_INFORMATION pi;
+    ZeroMemory(&si, sizeof(si));
+    si.cb = sizeof(si);
+    ZeroMemory(&pi, sizeof(pi));
+    std::string plot_cmd = "gnuplot -p -e \"set key autotitle columnhead; plot for[i = 0:*] file = sprintf('IterationInfo.0.R%i.txt', i) file u 2 w lp title file; while (1) { pause 2; replot }\"";
+    CreateProcessA(NULL, (LPSTR)plot_cmd.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
+#endif // GNUPLOT
+
+    //int retcode = system(cmd.c_str());
+    int retcode = system("timeout /t 5");
     
-    fout << "[" << get_time_string() << "]: " << "System call returned with status " << retcode << std::endl;
+    fout << "[" << get_time_string() << "]: " << "DVC returned with status " << retcode << std::endl;
     fout.close();
+    
+#ifdef GNUPLOT
+    TerminateProcess(pi.hProcess, 0);
+    CloseHandle(pi.hProcess);
+    CloseHandle(pi.hThread);
+#endif // GNUPLOT
 
     return retcode;
 }
