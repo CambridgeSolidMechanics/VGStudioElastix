@@ -91,8 +91,7 @@ int main(int argc, char* argv[])
     CreateProcessA(NULL, (LPSTR)plot_cmd.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
 #endif // GNUPLOT
 
-    //int retcode = system(cmd.c_str());
-    int retcode = system("timeout /t 5");
+    int retcode = system(cmd.c_str());
     
     fout << "[" << get_time_string() << "]: " << "DVC returned with status " << retcode << std::endl;
     fout.close();
