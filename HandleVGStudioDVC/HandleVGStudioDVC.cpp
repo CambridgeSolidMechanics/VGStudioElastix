@@ -87,11 +87,16 @@ int main(int argc, char* argv[])
     ZeroMemory(&si, sizeof(si));
     si.cb = sizeof(si);
     ZeroMemory(&pi, sizeof(pi));
-    std::string plot_cmd = "gnuplot -p -e \"set key autotitle columnhead; plot for[i = 0:*] file = sprintf('IterationInfo.0.R%i.txt', i) file u 2 w lp title file; while (1) { pause 2; replot }\"";
+    std::string output_path = arguments["-out"];
+    std::string plot_cmd = std::string("gnuplot -p -e \"set key autotitle columnhead; plot for[i = 0:*] file = sprintf('") + output_path + "\\IterationInfo.0.R%i.txt', i) file u 2 w lp title sprintf('R%i', i); while (1) { pause 2; replot }\"";
+    fout << "[" << get_time_string() << "]: " << "Running command " << plot_cmd << std::endl;
+    fout.flush();
     CreateProcessA(NULL, (LPSTR)plot_cmd.c_str(), NULL, NULL, FALSE, 0, NULL, NULL, &si, &pi);
 #endif // GNUPLOT
 
     int retcode = system(cmd.c_str());
+    //int retcode = system("timeout /t 5");
+
     
     fout << "[" << get_time_string() << "]: " << "DVC returned with status " << retcode << std::endl;
     fout.close();
