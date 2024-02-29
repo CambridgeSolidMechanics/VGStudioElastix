@@ -132,8 +132,8 @@ int main(int argc, char* argv[])
         write_gnuplot_script(output_path);
     }
 
-    //int retcode = system(cmd.c_str());
-    int retcode = system("timeout /t 5");
+    int retcode = system(cmd.c_str());
+    //int retcode = system("timeout /t 5");
 
     if ( opt.copy_logs || opt.copy_volumes ) {
         std::filesystem::path loc_dir(get_time_string("%Y%m%d_%H%M%S"));
