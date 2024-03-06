@@ -17,7 +17,7 @@ where the executable `elastix.exe` is compiled _elastix_<sup>[1](#myfootnote1)</
 ## Usage
 1. Open the project in Visual Studio. Choose the 'HandleVGStudioDVC' as the startup project. Compile the Visual Studio project. It should be straightforward as it only has dependencies from the C++ standard library.
 2. Take the resulting executable `HandleVGStudioDVC.exe`, rename it to `dvc.exe` and paste it in the VG Studio installation directory. (Create a backup copy of the original `dvc.exe` file and replace it with this version.)
-3. Take elastix <sup>[1](#myfootnote1)</sup> binary (from official release, or compile it yourself) and place it in the same directory as the VG Studio '.vgl' file which will be running the analysis. You'll also need the associated dll `ANNlib-5.1.dll`
+3. Take elastix <sup>[1](#myfootnote1)</sup> binary (from official release, or compile it yourself) and place it in the same directory as the VG Studio '.vgl' file which will be running the analysis. You'll also need to copy the associated dll `ANNlib-5.1.dll`
 4. Run DVC analysis from VG Studio as before. New files will be created in the directory: `DVC_mod_params.txt`, `DVC_log.txt` and `DVC_run_params.txt`. Their purpose is as follows:
    (i) `DVC_log.txt` is a log file. Use for troubleshooting. (ii) `DVC_mod_params.txt` will be initially empty. This file is the one we can modify to overwrite the default set of parameters.
    (iii) `DVC_run_params.txt` is the file with the final set of parameters which will be used for the analysis.
