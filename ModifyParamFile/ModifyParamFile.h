@@ -39,7 +39,7 @@ int modify_param_files(const string& fin, const string& fmod, const string& fout
 			params_enforce[key] = line;
 		}
 	}
-	clog << "Read " << params_enforce.size() << " lines from file '" << fmod << "'" << endl;
+	clog << "Read " << params_enforce.size() << " elastix parameter lines from file '" << fmod << "'" << endl;
 
 	// Read through fin. If the line is in the map, replace it with the value from the map
 	// Otherwise, leave the same. Either way write the line to fout
