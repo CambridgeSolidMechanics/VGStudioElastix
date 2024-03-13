@@ -47,6 +47,7 @@ static void load_options(std::filesystem::path& pth, Options& opt) {
             string value = line.substr(line.find(' ') + 1, line.npos);
             opt.extra_arguments[key] = value;
             std::clog << "[" << get_time_string() << "]: " << "Extra argument " << key << ' ' << value << std::endl;
+            continue;
         }
         if (line.find("copy_log") != std::string::npos) {
             opt.copy_logs = true;

@@ -26,6 +26,7 @@ where the executable `elastix.exe` is compiled _elastix_<sup>[1](#myfootnote1)</
    - including line `// copy_log` or `// copy_logs` will copy text logs from the temporary output directory into a subfolder in the current directory
    - including line `// copy_volume` or `// copy_volumes` will copy the volume files from the temporary output directory into a subfolder in the current directory
    - including line `// gnuplot` will produce a gnuplot script linked to the (temporary) output directory. The script can be used to monitor convergence during the analysis. If `// copy_logs` is also set, at the end of the run the gnuplot script will change to point to the subfolder with copied logs.
+   - any command line arguments can be passed in. For instance, including `-t0 [file]` will add this argument to the system call to `elastix.exe`. If the argument is one that was already part of the arguments in the VG Studio call, priority will be given to the argument value in `DVC_mod_params.txt`.
 6. Run VG Studio DVC analysis again to take the modified parameters into effect. Results will be read and visualized by VG Studio as before.
 
 ## Referenes
