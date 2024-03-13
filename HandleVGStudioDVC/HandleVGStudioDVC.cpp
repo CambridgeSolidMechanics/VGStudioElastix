@@ -65,14 +65,16 @@ static void load_options(std::filesystem::path& pth, Options& opt) {
     return;
 }
 
-static void write_gnuplot_script(std::filesystem::path& folder) {
+static void write_gnuplot_script( std::filesystem::path& folder, bool replot = true ) {
     std::string gp_file = "gplot.gp";
     std::ofstream gp(gp_file, std::ios::out);
     gp << "set key autotitle columnhead" << std::endl;
     gp << "plot for [i = 0:*] ";
     gp << "file = sprintf('" << folder.string() << "\\IterationInfo.0.R%i.txt', i) ";
     gp << "file u 2 w lp title sprintf('R%i',i)" << std::endl;
-    gp << "while (1) { pause 1; replot }";
+    if (replot) {
+        gp << "while (1) { pause 1; replot }";
+    }
     gp.close();
 }
 
@@ -157,7 +159,7 @@ int main(int argc, char* argv[])
         if (opt.copy_logs) {
             std::filesystem::copy(output_path, loc_dir, std::filesystem::copy_options::recursive);
             if (opt.gnuplot) {
-                write_gnuplot_script(loc_dir);
+                write_gnuplot_script(loc_dir, false);
             }
         }
         if (opt.copy_volumes) {
